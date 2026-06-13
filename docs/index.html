@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pacer — load testing for .NET</title>
+<meta name="description" content="Pacer is an open-source performance and load testing framework for .NET, built strictly on first-party Microsoft packages. Scenarios, steps, load profiles, percentiles, CSV/HTML reports.">
+<style>
+  :root{
+    --bg:#0a0d14; --panel:#111722; --panel2:#0e141d; --line:#1e2733;
+    --text:#e6edf3; --muted:#93a1b5; --dim:#62718a;
+    --accent:#7c8bff; --accent2:#22d3ee; --ok:#34d399; --warn:#fbbf24;
+    --radius:16px; --maxw:1080px;
+    --grad:linear-gradient(120deg,#7c8bff,#22d3ee);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Inter,sans-serif;
+    line-height:1.6; -webkit-font-smoothing:antialiased;
+    background-image:
+      radial-gradient(60rem 40rem at 75% -10%, rgba(124,139,255,.16), transparent 60%),
+      radial-gradient(50rem 40rem at 10% 0%, rgba(34,211,238,.12), transparent 55%);
+    background-repeat:no-repeat;
+  }
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+  .mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace}
+
+  /* nav */
+  nav{display:flex;align-items:center;justify-content:space-between;padding:22px 0}
+  .brand{display:flex;align-items:center;gap:12px;font-weight:800;font-size:1.25rem;letter-spacing:-.02em}
+  .logo{width:30px;height:30px;border-radius:9px;background:var(--grad);display:grid;place-items:center;box-shadow:0 6px 24px rgba(124,139,255,.4)}
+  .logo svg{width:18px;height:18px;display:block}
+  .navlinks{display:flex;gap:26px;align-items:center;color:var(--muted);font-weight:600;font-size:.95rem}
+  .navlinks a:hover{color:var(--text)}
+
+  /* hero */
+  .hero{padding:64px 0 36px;text-align:center}
+  .badge{display:inline-flex;gap:8px;align-items:center;border:1px solid var(--line);background:rgba(255,255,255,.02);
+    color:var(--muted);font-size:.8rem;font-weight:600;padding:6px 14px;border-radius:999px;margin-bottom:26px}
+  .badge .dot{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 10px var(--ok)}
+  h1{font-size:clamp(2.6rem,7vw,4.6rem);line-height:1.02;letter-spacing:-.04em;margin:.1em 0 .25em;font-weight:850}
+  h1 .grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .tag{font-size:clamp(1.05rem,2.5vw,1.4rem);color:var(--muted);max-width:640px;margin:0 auto 34px}
+  .cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:30px}
+  .btn{padding:13px 22px;border-radius:12px;font-weight:700;font-size:.98rem;border:1px solid transparent;transition:.15s;display:inline-flex;gap:9px;align-items:center}
+  .btn.primary{background:var(--grad);color:#0a0d14;box-shadow:0 10px 30px rgba(124,139,255,.35)}
+  .btn.primary:hover{transform:translateY(-2px);box-shadow:0 14px 38px rgba(124,139,255,.5)}
+  .btn.ghost{border-color:var(--line);color:var(--text);background:rgba(255,255,255,.02)}
+  .btn.ghost:hover{border-color:var(--accent);color:#fff}
+  .install{display:inline-flex;align-items:center;gap:14px;border:1px solid var(--line);background:var(--panel);
+    border-radius:12px;padding:11px 12px 11px 18px;margin:0 auto}
+  .install code{font-size:.98rem}
+  .install .pmt{color:var(--accent2)}
+  .copy{cursor:pointer;border:1px solid var(--line);background:var(--panel2);color:var(--muted);
+    border-radius:8px;padding:7px 11px;font-size:.8rem;font-weight:700;transition:.15s}
+  .copy:hover{color:#fff;border-color:var(--accent)}
+
+  /* section */
+  section{padding:54px 0}
+  .eyebrow{text-align:center;color:var(--accent2);font-weight:800;letter-spacing:.14em;text-transform:uppercase;font-size:.76rem;margin-bottom:10px}
+  h2{text-align:center;font-size:clamp(1.7rem,4vw,2.4rem);letter-spacing:-.03em;margin:0 0 8px;font-weight:820}
+  .sub{text-align:center;color:var(--muted);max-width:600px;margin:0 auto 40px}
+
+  /* features */
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:24px;transition:.18s}
+  .card:hover{border-color:#2c3a4e;transform:translateY(-3px);background:#131b27}
+  .card .ic{width:40px;height:40px;border-radius:11px;background:rgba(124,139,255,.12);display:grid;place-items:center;margin-bottom:14px;font-size:1.2rem}
+  .card h3{margin:0 0 6px;font-size:1.08rem;letter-spacing:-.01em}
+  .card p{margin:0;color:var(--muted);font-size:.93rem}
+
+  /* profiles */
+  .profiles{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+  .prof{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;text-align:center}
+  .prof svg{width:100%;height:64px;display:block;margin-bottom:10px}
+  .prof .nm{font-weight:750;font-size:.95rem}
+  .prof .ds{color:var(--dim);font-size:.78rem}
+  .prof .ln{fill:none;stroke:url(#g);stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round}
+  .prof .ar{fill:url(#ga)}
+
+  /* code + console */
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:stretch}
+  .code{background:var(--panel2);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+  .code .bar{display:flex;align-items:center;gap:7px;padding:12px 16px;border-bottom:1px solid var(--line);background:var(--panel)}
+  .code .bar i{width:11px;height:11px;border-radius:50%;display:inline-block}
+  .code .bar .t{margin-left:10px;color:var(--dim);font-size:.8rem}
+  pre{margin:0;padding:18px 20px;overflow:auto;font-size:.86rem;line-height:1.65}
+  pre code{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+  .k{color:#c4b5fd}.s{color:#86efac}.c{color:#5b6b82}.f{color:#7dd3fc}.n{color:#fca5a5}
+  .term{color:#cfe1ff}
+  .term .hd{color:var(--accent2)}
+  .term .ok{color:var(--ok)}.term .fail{color:#fb7185}.term .rule{color:#36465c}
+
+  footer{border-top:1px solid var(--line);padding:34px 0;color:var(--dim);text-align:center;font-size:.9rem}
+  footer a{color:var(--muted)}footer a:hover{color:#fff}
+
+  @media(max-width:860px){
+    .grid{grid-template-columns:1fr 1fr}
+    .profiles{grid-template-columns:repeat(2,1fr)}
+    .split{grid-template-columns:1fr}
+    .navlinks a:not(.gh){display:none}
+  }
+  @media(max-width:540px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav>
+    <div class="brand">
+      <span class="logo" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 16a8 8 0 0 1 16 0" stroke="#0a0d14" stroke-width="2.4" stroke-linecap="round"/><path d="M12 16l5-6" stroke="#0a0d14" stroke-width="2.4" stroke-linecap="round"/></svg>
+      </span>
+      Pacer
+    </div>
+    <div class="navlinks">
+      <a href="#features">Features</a>
+      <a href="#profiles">Load&nbsp;profiles</a>
+      <a href="#quickstart">Quickstart</a>
+      <a class="gh" href="https://github.com/jjnrmason/Pacer">GitHub&nbsp;↗</a>
+    </div>
+  </nav>
+</div>
+
+<header class="hero wrap">
+  <span class="badge"><span class="dot"></span> .NET 10 &middot; zero third-party dependencies</span>
+  <h1>Load testing for .NET,<br><span class="grad">without the baggage.</span></h1>
+  <p class="tag">Pacer is an open-source performance &amp; load testing framework built strictly on
+    first-party Microsoft packages. Define scenarios as a pipeline of steps, drive them under realistic
+    load profiles, and get latency percentiles in console, CSV &amp; HTML.</p>
+  <div class="cta">
+    <a class="btn primary" href="https://www.nuget.org/packages/Pacer">Install from NuGet</a>
+    <a class="btn ghost" href="https://github.com/jjnrmason/Pacer">⭐ Star on GitHub</a>
+  </div>
+  <div class="install">
+    <code class="mono"><span class="pmt">$</span> dotnet add package Pacer</code>
+    <button class="copy" id="copyBtn" data-cmd="dotnet add package Pacer">Copy</button>
+  </div>
+</header>
+
+<section id="features" class="wrap">
+  <div class="eyebrow">Why Pacer</div>
+  <h2>Everything you need, nothing you don't</h2>
+  <p class="sub">A focused engine with a clean fluent API — no plugins, no telemetry, no surprise transitive packages.</p>
+  <div class="grid">
+    <div class="card"><div class="ic">🧩</div><h3>First-party only</h3><p>Built on <span class="mono">Microsoft.Extensions.*</span> and <span class="mono">System.CommandLine</span>. No third-party runtime dependencies — ever.</p></div>
+    <div class="card"><div class="ic">🪜</div><h3>Five load profiles</h3><p>Load, Soak, Spike, Stress and Ramp out of the box, plus custom stage composition.</p></div>
+    <div class="card"><div class="ic">⛓️</div><h3>Fluent scenarios</h3><p>Inline setup and a step pipeline per virtual user — data flows step → step like a real user journey.</p></div>
+    <div class="card"><div class="ic">📊</div><h3>Real percentiles</h3><p>Bounded-memory HDR-style histograms give accurate p50–p99.9, plus live <span class="mono">dotnet-counters</span> metrics.</p></div>
+    <div class="card"><div class="ic">📄</div><h3>Console, CSV &amp; HTML</h3><p>Polished reports out of the box, and a pluggable <span class="mono">IReportWriter</span> for your own formats.</p></div>
+    <div class="card"><div class="ic">🎯</div><h3>Deterministic core</h3><p>Built on <span class="mono">TimeProvider</span>, so the engine is fully unit-tested with a fake clock — no flaky sleeps.</p></div>
+  </div>
+</section>
+
+<section id="profiles" class="wrap">
+  <div class="eyebrow">Model real traffic</div>
+  <h2>Built-in load profiles</h2>
+  <p class="sub">Closed-model concurrency — you control the number of virtual users, and the profile shapes it over time.</p>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7c8bff"/><stop offset="1" stop-color="#22d3ee"/></linearGradient>
+    <linearGradient id="ga" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgba(124,139,255,.28)"/><stop offset="1" stop-color="rgba(124,139,255,0)"/></linearGradient>
+  </defs></svg>
+  <div class="profiles">
+    <div class="prof">
+      <svg viewBox="0 0 160 64"><path class="ar" d="M6 20 H154 V60 H6 Z"/><polyline class="ln" points="6,20 154,20"/></svg>
+      <div class="nm">Load</div><div class="ds">constant users</div>
+    </div>
+    <div class="prof">
+      <svg viewBox="0 0 160 64"><path class="ar" d="M6 22 H154 V60 H6 Z"/><polyline class="ln" points="6,22 154,22"/></svg>
+      <div class="nm">Soak</div><div class="ds">endurance hold</div>
+    </div>
+    <div class="prof">
+      <svg viewBox="0 0 160 64"><path class="ar" d="M6 48 H60 V14 H100 V48 H154 V60 H6 Z"/><polyline class="ln" points="6,48 60,48 60,14 100,14 100,48 154,48"/></svg>
+      <div class="nm">Spike</div><div class="ds">sudden surge</div>
+    </div>
+    <div class="prof">
+      <svg viewBox="0 0 160 64"><path class="ar" d="M6 52 H44 V40 H82 V26 H120 V12 H154 V60 H6 Z"/><polyline class="ln" points="6,52 44,52 44,40 82,40 82,26 120,26 120,12 154,12"/></svg>
+      <div class="nm">Stress</div><div class="ds">staircase up</div>
+    </div>
+    <div class="prof">
+      <svg viewBox="0 0 160 64"><path class="ar" d="M6 56 L60 14 H100 L154 56 V60 H6 Z"/><polyline class="ln" points="6,56 60,14 100,14 154,56"/></svg>
+      <div class="nm">Ramp</div><div class="ds">bell curve</div>
+    </div>
+  </div>
+</section>
+
+<section id="quickstart" class="wrap">
+  <div class="eyebrow">Quickstart</div>
+  <h2>From zero to a load test in one file</h2>
+  <p class="sub">Register a scenario, hand your args to Pacer, and run it.</p>
+  <div class="split">
+    <div class="code">
+      <div class="bar"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i><span class="t mono">Program.cs</span></div>
+<pre class="mono"><code><span class="k">return await</span> PacerApplication.<span class="f">RunAsync</span>(args, builder =&gt;
+{
+    builder.Services.<span class="f">AddPacer</span>()
+        .<span class="f">AddScenario</span>(Scenario.<span class="f">Create</span>(<span class="s">"checkout"</span>)
+            .<span class="f">WithSetup</span>(<span class="k">async</span> ctx =&gt; <span class="k">new</span> CheckoutData(<span class="s">"token"</span>))
+            .<span class="f">AddStep</span>(<span class="s">"login"</span>,   <span class="k">async</span> ctx =&gt; StepResult.<span class="f">Ok</span>())
+            .<span class="f">AddStep</span>(<span class="s">"browse"</span>,  <span class="k">async</span> ctx =&gt; StepResult.<span class="f">Ok</span>())
+            .<span class="f">AddStep</span>(<span class="s">"purchase"</span>,<span class="k">async</span> ctx =&gt; StepResult.<span class="f">Ok</span>())
+            .<span class="f">WithLoad</span>(LoadProfiles.<span class="f">Ramp</span>(
+                peak: <span class="n">200</span>,
+                rampUp:   TimeSpan.<span class="f">FromSeconds</span>(<span class="n">30</span>),
+                hold:     TimeSpan.<span class="f">FromMinutes</span>(<span class="n">1</span>),
+                rampDown: TimeSpan.<span class="f">FromSeconds</span>(<span class="n">30</span>))));
+});
+
+<span class="c">// dotnet run -- run --scenario checkout</span></code></pre>
+    </div>
+    <div class="code">
+      <div class="bar"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i><span class="t mono">console</span></div>
+<pre class="mono term"><code><span class="rule">═══════════════════════════════════════════════</span>
+ Scenario: checkout  [group: storefront]
+ Profile:  Ramp  ·  200 peak users  ·  2m 00s
+<span class="rule">═══════════════════════════════════════════════</span>
+ step          ok   fail    rps   p95 ms   p99 ms
+<span class="rule">───────────────────────────────────────────────</span>
+ login     <span class="ok">12,418</span>     <span class="ok">0</span>  207.0    13.95    14.98
+ browse    <span class="ok">12,390</span>     <span class="ok">0</span>  206.5    33.28    34.30
+ purchase  <span class="ok">12,144</span>   <span class="fail">246</span>  206.4    43.52    44.54
+<span class="rule">───────────────────────────────────────────────</span>
+ checkout  <span class="ok">12,144</span>   <span class="fail">246</span>  207.4    80.90    87.04
+<span class="rule">═══════════════════════════════════════════════</span></code></pre>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p><strong>Pacer</strong> — Apache-2.0 licensed ·
+      <a href="https://www.nuget.org/packages/Pacer">NuGet</a> ·
+      <a href="https://github.com/jjnrmason/Pacer">GitHub</a></p>
+    <p style="margin-top:6px;color:var(--dim)">An independent load-testing framework for the .NET ecosystem.</p>
+  </div>
+</footer>
+
+<script>
+  const b = document.getElementById('copyBtn');
+  b.addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(b.dataset.cmd); b.textContent = 'Copied!'; }
+    catch { b.textContent = 'Copy failed'; }
+    setTimeout(() => (b.textContent = 'Copy'), 1500);
+  });
+</script>
+</body>
+</html>
