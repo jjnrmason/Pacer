@@ -17,7 +17,7 @@
     <PackageTags>load-testing;performance;load;stress;soak;spike;benchmark;metrics;testing</PackageTags>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageProjectUrl>https://jjnrmason.github.io/pacer</PackageProjectUrl>
+    <PackageProjectUrl>https://jjnrmason.github.io/Pacer</PackageProjectUrl>
     <RepositoryUrl>https://github.com/jjnrmason/Pacer</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
