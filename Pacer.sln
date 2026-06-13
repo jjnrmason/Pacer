@@ -1,0 +1,79 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{827E0CD3-B72D-47B6-A68D-7590B98EB39B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pacer", "src\Pacer\Pacer.csproj", "{575E4C11-858C-4ABC-95B1-877A0CA3B4CB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pacer.Tests", "src\Pacer.Tests\Pacer.Tests.csproj", "{C4F94C3D-AB7A-4532-BD24-34C060CCD77A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pacer.Sample", "src\Pacer.Sample\Pacer.Sample.csproj", "{3E0E6488-1B22-46CC-AE14-50F2BCE1A95D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Project Files", "Project Files", "{CA79A9A9-1465-40CF-B4F4-05B50174AD29}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\release.yml = .github\workflows\release.yml
+		.github\workflows\ci.yml = .github\workflows\ci.yml
+		.gitignore = .gitignore
+		LICENSE = LICENSE
+		.editorconfig = .editorconfig
+		README.md = README.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{575E4C11-858C-4ABC-95B1-877A0CA3B4CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{575E4C11-858C-4ABC-95B1-877A0CA3B4CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{575E4C11-858C-4ABC-95B1-877A0CA3B4CB}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{575E4C11-858C-4ABC-95B1-877A0CA3B4CB}.Debug|x64.Build.0 = Debug|Any CPU
+		{575E4C11-858C-4ABC-95B1-877A0CA3B4CB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{575E4C11-858C-4ABC-95B1-877A0CA3B4CB}.Debug|x86.Build.0 = Debug|Any CPU
+		{575E4C11-858C-4ABC-95B1-877A0CA3B4CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{575E4C11-858C-4ABC-95B1-877A0CA3B4CB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{575E4C11-858C-4ABC-95B1-877A0CA3B4CB}.Release|x64.ActiveCfg = Release|Any CPU
+		{575E4C11-858C-4ABC-95B1-877A0CA3B4CB}.Release|x64.Build.0 = Release|Any CPU
+		{575E4C11-858C-4ABC-95B1-877A0CA3B4CB}.Release|x86.ActiveCfg = Release|Any CPU
+		{575E4C11-858C-4ABC-95B1-877A0CA3B4CB}.Release|x86.Build.0 = Release|Any CPU
+		{C4F94C3D-AB7A-4532-BD24-34C060CCD77A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4F94C3D-AB7A-4532-BD24-34C060CCD77A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4F94C3D-AB7A-4532-BD24-34C060CCD77A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C4F94C3D-AB7A-4532-BD24-34C060CCD77A}.Debug|x64.Build.0 = Debug|Any CPU
+		{C4F94C3D-AB7A-4532-BD24-34C060CCD77A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C4F94C3D-AB7A-4532-BD24-34C060CCD77A}.Debug|x86.Build.0 = Debug|Any CPU
+		{C4F94C3D-AB7A-4532-BD24-34C060CCD77A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4F94C3D-AB7A-4532-BD24-34C060CCD77A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4F94C3D-AB7A-4532-BD24-34C060CCD77A}.Release|x64.ActiveCfg = Release|Any CPU
+		{C4F94C3D-AB7A-4532-BD24-34C060CCD77A}.Release|x64.Build.0 = Release|Any CPU
+		{C4F94C3D-AB7A-4532-BD24-34C060CCD77A}.Release|x86.ActiveCfg = Release|Any CPU
+		{C4F94C3D-AB7A-4532-BD24-34C060CCD77A}.Release|x86.Build.0 = Release|Any CPU
+		{3E0E6488-1B22-46CC-AE14-50F2BCE1A95D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E0E6488-1B22-46CC-AE14-50F2BCE1A95D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E0E6488-1B22-46CC-AE14-50F2BCE1A95D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3E0E6488-1B22-46CC-AE14-50F2BCE1A95D}.Debug|x64.Build.0 = Debug|Any CPU
+		{3E0E6488-1B22-46CC-AE14-50F2BCE1A95D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3E0E6488-1B22-46CC-AE14-50F2BCE1A95D}.Debug|x86.Build.0 = Debug|Any CPU
+		{3E0E6488-1B22-46CC-AE14-50F2BCE1A95D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E0E6488-1B22-46CC-AE14-50F2BCE1A95D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E0E6488-1B22-46CC-AE14-50F2BCE1A95D}.Release|x64.ActiveCfg = Release|Any CPU
+		{3E0E6488-1B22-46CC-AE14-50F2BCE1A95D}.Release|x64.Build.0 = Release|Any CPU
+		{3E0E6488-1B22-46CC-AE14-50F2BCE1A95D}.Release|x86.ActiveCfg = Release|Any CPU
+		{3E0E6488-1B22-46CC-AE14-50F2BCE1A95D}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{575E4C11-858C-4ABC-95B1-877A0CA3B4CB} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
+		{C4F94C3D-AB7A-4532-BD24-34C060CCD77A} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
+		{3E0E6488-1B22-46CC-AE14-50F2BCE1A95D} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
+	EndGlobalSection
+EndGlobal
