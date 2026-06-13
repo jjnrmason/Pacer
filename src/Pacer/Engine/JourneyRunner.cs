@@ -4,7 +4,7 @@ using Pacer.Steps;
 namespace Pacer.Engine;
 
 /// <summary>The result of running one journey (a single pass through a scenario's steps).</summary>
-internal readonly record struct JourneyOutcome(bool IsOk, TimeSpan Elapsed);
+internal readonly record struct JourneyOutcome(bool IsOk, TimeSpan Elapsed, long BytesSent, long BytesReceived);
 
 /// <summary>
 /// Executes a scenario's steps once, in order, as a pipeline for a single virtual user. Each step
@@ -23,6 +23,7 @@ internal static class JourneyRunner
         context.Previous = null;
         var journeyStart = timeProvider.GetTimestamp();
         var allOk = true;
+        long bytesSent = 0, bytesReceived = 0;
 
         foreach (var step in steps)
         {
@@ -50,7 +51,15 @@ internal static class JourneyRunner
             }
 
             var elapsed = timeProvider.GetElapsedTime(stepStart);
+
+            // Fold any bytes the step accumulated via the context counters into the result, on top of
+            // whatever it reported on the StepResult itself, then drain the counters for the next step.
+            var (countedSent, countedReceived) = context.TakeBytes();
+            result = result.WithBytes(result.BytesSent + countedSent, result.BytesReceived + countedReceived);
+
             recorder.Record(step.Name, elapsed, result);
+            bytesSent += result.BytesSent;
+            bytesReceived += result.BytesReceived;
 
             if (!result.IsOk)
             {
@@ -61,6 +70,6 @@ internal static class JourneyRunner
             context.Previous = result.Payload;
         }
 
-        return new JourneyOutcome(allOk, timeProvider.GetElapsedTime(journeyStart));
+        return new JourneyOutcome(allOk, timeProvider.GetElapsedTime(journeyStart), bytesSent, bytesReceived);
     }
 }

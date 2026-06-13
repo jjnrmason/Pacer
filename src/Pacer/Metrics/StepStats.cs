@@ -15,8 +15,14 @@ public sealed record StepStats
     /// <summary>Count of failed executions.</summary>
     public long Fail { get; init; }
 
-    /// <summary>Total bytes reported transferred across all executions.</summary>
-    public long TotalBytes { get; init; }
+    /// <summary>Total bytes sent across all executions.</summary>
+    public long BytesSent { get; init; }
+
+    /// <summary>Total bytes received across all executions.</summary>
+    public long BytesReceived { get; init; }
+
+    /// <summary>Total bytes transferred across all executions (<see cref="BytesSent"/> + <see cref="BytesReceived"/>).</summary>
+    public long TotalBytes => BytesSent + BytesReceived;
 
     /// <summary>Throughput in successful-or-failed executions per second over the measured window.</summary>
     public double RequestsPerSecond { get; init; }

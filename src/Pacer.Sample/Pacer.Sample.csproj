@@ -10,4 +10,8 @@
     <ProjectReference Include="..\Pacer\Pacer.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="reports\" />
+  </ItemGroup>
+
 </Project>

@@ -38,28 +38,37 @@ public sealed class HtmlReportWriter : IReportWriter
         sb.AppendLine("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
         sb.AppendLine("<title>Pacer report</title>");
         sb.AppendLine("<style>");
-        sb.AppendLine("body{font-family:system-ui,Segoe UI,Roboto,sans-serif;margin:2rem;color:#1a1a1a;background:#fafafa}");
-        sb.AppendLine("h1{font-size:1.6rem}h2{font-size:1.2rem;margin-top:2rem}");
-        sb.AppendLine(".meta{color:#555;font-size:.85rem;margin-bottom:1rem}");
-        sb.AppendLine("table{border-collapse:collapse;width:100%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.1)}");
-        sb.AppendLine("th,td{padding:.5rem .75rem;text-align:right;border-bottom:1px solid #eee;font-variant-numeric:tabular-nums}");
+        // Palette and styling mirror the Pacer docs site (docs/index.html) for a consistent look.
+        sb.AppendLine(":root{--bg:#0a0d14;--panel:#111722;--panel2:#0e141d;--line:#1e2733;--text:#e6edf3;--muted:#93a1b5;--dim:#62718a;--accent:#7c8bff;--accent2:#22d3ee;--ok:#34d399;--fail:#fb7185;--radius:16px;--grad:linear-gradient(120deg,#7c8bff,#22d3ee)}");
+        sb.AppendLine("*{box-sizing:border-box}");
+        sb.AppendLine("body{margin:0;padding:2.5rem 1.5rem;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;font-family:ui-sans-serif,system-ui,-apple-system,\"Segoe UI\",Roboto,Inter,sans-serif;background-image:radial-gradient(60rem 40rem at 75% -10%,rgba(124,139,255,.16),transparent 60%),radial-gradient(50rem 40rem at 10% 0%,rgba(34,211,238,.12),transparent 55%);background-repeat:no-repeat}");
+        sb.AppendLine(".wrap{max-width:1080px;margin:0 auto}");
+        sb.AppendLine("h1{font-size:clamp(1.8rem,4vw,2.4rem);letter-spacing:-.03em;font-weight:820;margin:0 0 1.75rem}");
+        sb.AppendLine("h1 .grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}");
+        sb.AppendLine("h2{font-size:1.25rem;letter-spacing:-.01em;margin:2.4rem 0 .4rem;font-weight:750}");
+        sb.AppendLine("h2 .group{color:var(--dim);font-weight:600;font-size:.9rem}");
+        sb.AppendLine(".meta{color:var(--muted);font-size:.85rem;margin-bottom:1rem}");
+        sb.AppendLine("table{border-collapse:collapse;width:100%;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;font-variant-numeric:tabular-nums}");
+        sb.AppendLine("th,td{padding:.5rem .85rem;text-align:right;border-bottom:1px solid var(--line)}");
         sb.AppendLine("th:first-child,td:first-child{text-align:left}");
-        sb.AppendLine("th{background:#f0f0f0;font-weight:600}");
-        sb.AppendLine("tr.total td{font-weight:700;border-top:2px solid #ccc}");
+        sb.AppendLine("thead th{background:var(--panel2);color:var(--muted);font-weight:600;font-size:.74rem;text-transform:uppercase;letter-spacing:.06em}");
+        sb.AppendLine("tbody tr:last-child td{border-bottom:none}");
+        sb.AppendLine("tr.total td{font-weight:700;border-top:2px solid #2c3a4e}");
+        sb.AppendLine("td.ok{color:var(--ok)}td.fail{color:var(--fail)}td.zero{color:var(--dim)}");
         sb.AppendLine(".spark{margin:.5rem 0}");
-        sb.AppendLine("</style></head><body>");
-        sb.AppendLine("<h1>Pacer performance report</h1>");
+        sb.AppendLine("</style></head><body><div class=\"wrap\">");
+        sb.AppendLine("<h1>Pacer <span class=\"grad\">performance report</span></h1>");
 
         foreach (var report in reports)
             AppendScenario(sb, report);
 
-        sb.AppendLine("</body></html>");
+        sb.AppendLine("</div></body></html>");
         return sb.ToString();
     }
 
     private static void AppendScenario(StringBuilder sb, RunReport report)
     {
-        var group = report.Group is null ? "" : $" <span class=\"meta\">[group: {Encode(report.Group)}]</span>";
+        var group = report.Group is null ? "" : $" <span class=\"group\">[group: {Encode(report.Group)}]</span>";
         sb.Append("<h2>").Append(Encode(report.ScenarioName)).Append(group).AppendLine("</h2>");
 
         sb.Append("<div class=\"meta\">")
@@ -76,7 +85,7 @@ public sealed class HtmlReportWriter : IReportWriter
         AppendSparkline(sb, report);
 
         sb.AppendLine("<table><thead><tr>");
-        foreach (var header in new[] { "step", "ok", "fail", "rps", "min ms", "mean ms", "p50 ms", "p95 ms", "p99 ms", "p99.9 ms", "max ms" })
+        foreach (var header in new[] { "step", "ok", "fail", "rps", "in", "out", "min ms", "mean ms", "p50 ms", "p95 ms", "p99 ms", "p99.9 ms", "max ms" })
             sb.Append("<th>").Append(header).Append("</th>");
         sb.AppendLine("</tr></thead><tbody>");
 
@@ -91,9 +100,12 @@ public sealed class HtmlReportWriter : IReportWriter
     {
         sb.Append(isTotal ? "<tr class=\"total\">" : "<tr>");
         sb.Append("<td>").Append(Encode(step.Name)).Append("</td>");
-        sb.Append("<td>").Append(ReportFormatting.Int(step.Ok)).Append("</td>");
-        sb.Append("<td>").Append(ReportFormatting.Int(step.Fail)).Append("</td>");
+        // ok in green, fail in red; a zero count is dimmed rather than coloured.
+        sb.Append(step.Ok > 0 ? "<td class=\"ok\">" : "<td class=\"zero\">").Append(ReportFormatting.Int(step.Ok)).Append("</td>");
+        sb.Append(step.Fail > 0 ? "<td class=\"fail\">" : "<td class=\"zero\">").Append(ReportFormatting.Int(step.Fail)).Append("</td>");
         sb.Append("<td>").Append(ReportFormatting.Rps(step.RequestsPerSecond)).Append("</td>");
+        sb.Append("<td>").Append(ReportFormatting.Bytes(step.BytesReceived)).Append("</td>");
+        sb.Append("<td>").Append(ReportFormatting.Bytes(step.BytesSent)).Append("</td>");
         sb.Append("<td>").Append(ReportFormatting.Ms(step.MinMs)).Append("</td>");
         sb.Append("<td>").Append(ReportFormatting.Ms(step.MeanMs)).Append("</td>");
         sb.Append("<td>").Append(ReportFormatting.Ms(step.P50Ms)).Append("</td>");
@@ -130,7 +142,9 @@ public sealed class HtmlReportWriter : IReportWriter
         sb.Append("<svg class=\"spark\" viewBox=\"0 0 ").Append(width).Append(' ').Append(height)
           .Append("\" width=\"").Append(width).Append("\" height=\"").Append(height)
           .Append("\" role=\"img\" aria-label=\"throughput over time\">");
-        sb.Append("<polyline fill=\"none\" stroke=\"#2563eb\" stroke-width=\"2\" points=\"")
+        sb.Append("<defs><linearGradient id=\"spark\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"0\">")
+          .Append("<stop offset=\"0\" stop-color=\"#7c8bff\"/><stop offset=\"1\" stop-color=\"#22d3ee\"/></linearGradient></defs>");
+        sb.Append("<polyline fill=\"none\" stroke=\"url(#spark)\" stroke-width=\"2\" stroke-linejoin=\"round\" stroke-linecap=\"round\" points=\"")
           .Append(points.ToString().TrimEnd()).Append("\"/>");
         sb.Append("</svg>");
         sb.AppendLine();

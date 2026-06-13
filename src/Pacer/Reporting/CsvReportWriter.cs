@@ -36,7 +36,7 @@ public sealed class CsvReportWriter : IReportWriter
         ArgumentNullException.ThrowIfNull(reports);
 
         var sb = new StringBuilder();
-        sb.AppendLine("scenario,row,ok,fail,total,rps,min_ms,mean_ms,p50_ms,p75_ms,p95_ms,p99_ms,p999_ms,max_ms,bytes");
+        sb.AppendLine("scenario,row,ok,fail,total,rps,min_ms,mean_ms,p50_ms,p75_ms,p95_ms,p99_ms,p999_ms,max_ms,bytes_sent,bytes_received");
 
         foreach (var report in reports)
         {
@@ -91,7 +91,8 @@ public sealed class CsvReportWriter : IReportWriter
           .Append(ReportFormatting.Ms(step.P99Ms)).Append(',')
           .Append(ReportFormatting.Ms(step.P999Ms)).Append(',')
           .Append(ReportFormatting.Ms(step.MaxMs)).Append(',')
-          .Append(ReportFormatting.Int(step.TotalBytes))
+          .Append(ReportFormatting.Int(step.BytesSent)).Append(',')
+          .Append(ReportFormatting.Int(step.BytesReceived))
           .AppendLine();
     }
 }

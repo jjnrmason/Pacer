@@ -21,7 +21,7 @@ namespace Pacer.Scenarios;
 ///         var data = ctx.ScenarioDataAs<CheckoutData>()!;
 ///         return StepResult.Ok(payload: data.AuthToken);
 ///     })
-///     .AddStep("browse", async ctx => StepResult.Ok(sizeBytes: 4096))
+///     .AddStep("browse", async ctx => StepResult.Ok(bytesReceived: 4096))
 ///     .AddStep("purchase", async ctx => StepResult.Ok())
 ///     .WithLoad(LoadProfiles.Ramp(
 ///         peak: 50,

@@ -25,7 +25,7 @@ public sealed class StepStatsCollector
     }
 
     /// <summary>Records a single execution result.</summary>
-    public void Record(TimeSpan latency, bool isOk, long sizeBytes = 0)
+    public void Record(TimeSpan latency, bool isOk, long bytesSent = 0, long bytesReceived = 0)
     {
         var shard = _shards[(uint)Thread.GetCurrentProcessorId() % (uint)_shards.Length];
         lock (shard.Gate)
@@ -35,7 +35,8 @@ public sealed class StepStatsCollector
                 shard.Ok++;
             else
                 shard.Fail++;
-            shard.Bytes += sizeBytes;
+            shard.BytesSent += bytesSent;
+            shard.BytesReceived += bytesReceived;
         }
     }
 
@@ -46,7 +47,7 @@ public sealed class StepStatsCollector
     public StepStats Snapshot(TimeSpan measuredWindow)
     {
         var merged = new LatencyHistogram();
-        long ok = 0, fail = 0, bytes = 0;
+        long ok = 0, fail = 0, bytesSent = 0, bytesReceived = 0;
 
         foreach (var shard in _shards)
         {
@@ -55,7 +56,8 @@ public sealed class StepStatsCollector
                 merged.Add(shard.Histogram);
                 ok += shard.Ok;
                 fail += shard.Fail;
-                bytes += shard.Bytes;
+                bytesSent += shard.BytesSent;
+                bytesReceived += shard.BytesReceived;
             }
         }
 
@@ -67,7 +69,8 @@ public sealed class StepStatsCollector
             Name = Name,
             Ok = ok,
             Fail = fail,
-            TotalBytes = bytes,
+            BytesSent = bytesSent,
+            BytesReceived = bytesReceived,
             RequestsPerSecond = rps,
             MinMs = ToMs(merged.MinMicroseconds),
             MeanMs = merged.MeanMicroseconds / 1000d,
@@ -88,6 +91,7 @@ public sealed class StepStatsCollector
         public readonly LatencyHistogram Histogram = new();
         public long Ok;
         public long Fail;
-        public long Bytes;
+        public long BytesSent;
+        public long BytesReceived;
     }
 }

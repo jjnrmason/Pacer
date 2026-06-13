@@ -32,7 +32,7 @@ internal sealed class CollectorRecorder : IStepRecorder
     public void Record(string stepName, TimeSpan latency, StepResult result)
     {
         if (_collectors.TryGetValue(stepName, out var collector))
-            collector.Record(latency, result.IsOk, result.SizeBytes);
+            collector.Record(latency, result.IsOk, result.BytesSent, result.BytesReceived);
 
         if (result.IsOk)
             Interlocked.Increment(ref _ok);

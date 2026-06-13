@@ -32,6 +32,19 @@ public interface IStepContext
 
     /// <summary>Signals that the test is stopping and in-flight work should unwind.</summary>
     CancellationToken CancellationToken { get; }
+
+    /// <summary>
+    /// Adds to the bytes-sent counter for the current step (e.g. a request body size). The total is
+    /// folded into the step's reported transfer — even if the step subsequently fails — so it can be
+    /// called as I/O happens without threading the count through the returned <see cref="StepResult"/>.
+    /// </summary>
+    void AddBytesSent(long bytes);
+
+    /// <summary>
+    /// Adds to the bytes-received counter for the current step (e.g. a response body size). See
+    /// <see cref="AddBytesSent"/> for how the total is recorded.
+    /// </summary>
+    void AddBytesReceived(long bytes);
 }
 
 /// <summary>Convenience accessors for the loosely-typed values on <see cref="IStepContext"/>.</summary>

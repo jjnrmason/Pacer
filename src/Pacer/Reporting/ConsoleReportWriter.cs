@@ -10,7 +10,22 @@ namespace Pacer.Reporting;
 public sealed class ConsoleReportWriter : IReportWriter
 {
     private const int ColumnGap = 2;
-    private static readonly string[] Headers = ["step", "ok", "fail", "rps", "mean ms", "p95 ms", "p99 ms", "max ms"];
+    private static readonly string[] Headers = ["step", "ok", "fail", "rps", "in", "out", "mean ms", "p95 ms", "p99 ms", "max ms"];
+
+    // Column indices whose values are coloured in data rows.
+    private const int OkColumn = 1;
+    private const int FailColumn = 2;
+
+    private const string AnsiGreen = "\u001b[32m";
+    private const string AnsiRed = "\u001b[31m";
+    private const string AnsiReset = "\u001b[0m";
+
+    /// <summary>
+    /// Whether ANSI colour is emitted. Disabled when output is redirected (e.g. piped to a file) or
+    /// when the conventional <c>NO_COLOR</c> environment variable is set.
+    /// </summary>
+    private static bool ColorEnabled =>
+        !Console.IsOutputRedirected && Environment.GetEnvironmentVariable("NO_COLOR") is null;
 
     /// <inheritdoc />
     public string Format => "console";
@@ -59,12 +74,13 @@ public sealed class ConsoleReportWriter : IReportWriter
         sb.AppendLine(titleLine);
         sb.AppendLine(profileLine);
         sb.AppendLine(heavy);
-        sb.AppendLine(FormatRow(Headers, widths));
+        var colorize = ColorEnabled;
+        sb.AppendLine(FormatRow(Headers, widths, colorize: false));
         sb.AppendLine(light);
         foreach (var row in rows)
-            sb.AppendLine(FormatRow(row, widths));
+            sb.AppendLine(FormatRow(row, widths, colorize));
         sb.AppendLine(light);
-        sb.AppendLine(FormatRow(journey, widths));
+        sb.AppendLine(FormatRow(journey, widths, colorize));
         sb.Append(heavy);
         return sb.ToString();
     }
@@ -75,13 +91,15 @@ public sealed class ConsoleReportWriter : IReportWriter
         ReportFormatting.IntGrouped(step.Ok),
         ReportFormatting.IntGrouped(step.Fail),
         ReportFormatting.Rps(step.RequestsPerSecond),
+        ReportFormatting.Bytes(step.BytesReceived),
+        ReportFormatting.Bytes(step.BytesSent),
         ReportFormatting.Ms(step.MeanMs),
         ReportFormatting.Ms(step.P95Ms),
         ReportFormatting.Ms(step.P99Ms),
         ReportFormatting.Ms(step.MaxMs),
     ];
 
-    private static string FormatRow(IReadOnlyList<string> cells, int[] widths)
+    private static string FormatRow(IReadOnlyList<string> cells, int[] widths, bool colorize)
     {
         var sb = new StringBuilder();
         sb.Append(' ');
@@ -91,7 +109,19 @@ public sealed class ConsoleReportWriter : IReportWriter
                 sb.Append(' ', ColumnGap);
 
             // First column (the step name) is left-aligned; numeric columns are right-aligned.
-            sb.Append(i == 0 ? cells[i].PadRight(widths[i]) : cells[i].PadLeft(widths[i]));
+            var cell = i == 0 ? cells[i].PadRight(widths[i]) : cells[i].PadLeft(widths[i]);
+
+            // Colour is applied after padding so the escape codes don't disturb column alignment.
+            // A zero count is left uncoloured so a clean run isn't a wall of red zeros.
+            if (colorize && cells[i] != "0")
+            {
+                if (i == OkColumn)
+                    cell = $"{AnsiGreen}{cell}{AnsiReset}";
+                else if (i == FailColumn)
+                    cell = $"{AnsiRed}{cell}{AnsiReset}";
+            }
+
+            sb.Append(cell);
         }
 
         return sb.ToString();

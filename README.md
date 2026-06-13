@@ -1,4 +1,16 @@
+<div align="center">
+
+<img src="https://raw.githubusercontent.com/jjnrmason/Pacer/main/docs/logo.png" alt="Pacer logo" width="96" height="96">
+
 # Pacer
+
+**Load testing for .NET, without the baggage.**
+
+[![NuGet](https://img.shields.io/nuget/v/Pacer.svg?logo=nuget&label=NuGet)](https://www.nuget.org/packages/Pacer)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](#license)
+[![.NET](https://img.shields.io/badge/.NET-10-512BD4?logo=dotnet&logoColor=white)](#)
+
+</div>
 
 An open-source performance and load testing framework for the .NET ecosystem, built **strictly on
 first-party Microsoft packages** — no third-party runtime dependencies.

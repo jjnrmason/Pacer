@@ -12,7 +12,7 @@ public partial class WhenRenderingCsv
             var csv = CsvReportWriter.RenderSummary([ReportFixtures.Report()]);
 
             var firstLine = csv.Split('\n')[0].Trim();
-            Assert.That(firstLine, Is.EqualTo("scenario,row,ok,fail,total,rps,min_ms,mean_ms,p50_ms,p75_ms,p95_ms,p99_ms,p999_ms,max_ms,bytes"));
+            Assert.That(firstLine, Is.EqualTo("scenario,row,ok,fail,total,rps,min_ms,mean_ms,p50_ms,p75_ms,p95_ms,p99_ms,p999_ms,max_ms,bytes_sent,bytes_received"));
         }
 
         [Test]

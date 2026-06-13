@@ -15,6 +15,25 @@ internal static class ReportFormatting
 
     public static string IntGrouped(long value) => value.ToString("N0", Invariant);
 
+    /// <summary>A compact human-friendly byte size, e.g. "512 B", "4.0 KB" or "1.5 MB" (1024-based).</summary>
+    public static string Bytes(long value)
+    {
+        if (value < 1024)
+            return $"{value} B";
+
+        double scaled = value;
+        string[] units = ["KB", "MB", "GB", "TB", "PB"];
+        var unit = -1;
+        do
+        {
+            scaled /= 1024;
+            unit++;
+        }
+        while (scaled >= 1024 && unit < units.Length - 1);
+
+        return $"{scaled.ToString("0.0", Invariant)} {units[unit]}";
+    }
+
     /// <summary>A compact human-friendly duration, e.g. "45.0s" or "2m 30s".</summary>
     public static string HumanDuration(TimeSpan value)
         => value.TotalSeconds < 60

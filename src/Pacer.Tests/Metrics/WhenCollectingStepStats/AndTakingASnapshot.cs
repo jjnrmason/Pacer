@@ -29,12 +29,24 @@ public partial class WhenCollectingStepStats
         [Test]
         public void ThenItSumsTransferredBytes()
         {
-            this.StepStatsCollector.Record(TimeSpan.FromMilliseconds(10), isOk: true, sizeBytes: 100);
-            this.StepStatsCollector.Record(TimeSpan.FromMilliseconds(10), isOk: true, sizeBytes: 250);
+            this.StepStatsCollector.Record(TimeSpan.FromMilliseconds(10), isOk: true, bytesSent: 40, bytesReceived: 100);
+            this.StepStatsCollector.Record(TimeSpan.FromMilliseconds(10), isOk: true, bytesSent: 60, bytesReceived: 250);
 
             var snapshot = this.StepStatsCollector.Snapshot(TimeSpan.FromSeconds(1));
 
-            Assert.That(snapshot.TotalBytes, Is.EqualTo(350));
+            Assert.That(snapshot.TotalBytes, Is.EqualTo(450));
+        }
+
+        [Test]
+        public void ThenItSumsBytesSentAndReceivedSeparately()
+        {
+            this.StepStatsCollector.Record(TimeSpan.FromMilliseconds(10), isOk: true, bytesSent: 40, bytesReceived: 100);
+            this.StepStatsCollector.Record(TimeSpan.FromMilliseconds(10), isOk: true, bytesSent: 60, bytesReceived: 250);
+
+            var snapshot = this.StepStatsCollector.Snapshot(TimeSpan.FromSeconds(1));
+
+            Assert.That(snapshot.BytesSent, Is.EqualTo(100));
+            Assert.That(snapshot.BytesReceived, Is.EqualTo(350));
         }
 
         [Test]

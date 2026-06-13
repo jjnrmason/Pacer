@@ -193,7 +193,7 @@ public sealed class ScenarioRunner
                 break;
             }
 
-            journeyCollector?.Record(outcome.Elapsed, outcome.IsOk);
+            journeyCollector?.Record(outcome.Elapsed, outcome.IsOk, outcome.BytesSent, outcome.BytesReceived);
         }
     }
 }
